@@ -1,0 +1,17 @@
+// https://www.typescriptlang.org/tsconfig
+{
+  "compilerOptions": {
+    "strict": true,
+    "outDir": "dist",
+    "lib": [
+      "es2019",
+      "es2020.bigint",
+      "es2020.string",
+      "es2020.symbol.wellknown"
+    ],
+    "target": "ES2019",
+    "module": "commonjs",
+    // Stop compiling on erros (dist will not be upgraded)
+    "noEmitOnError":   true
+  }
+}
