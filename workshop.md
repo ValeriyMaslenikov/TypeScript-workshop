@@ -165,3 +165,92 @@ After install you may see an error,
 
 https://www.typescriptlang.org/docs/handbook/declaration-files/publishing.html
 https://github.com/DefinitelyTyped/DefinitelyTyped  
+
+## Type Unions and Type Intersections
+
+Let's create several types like: User, UserAdmin, UserModerator
+
+```
+type BaseUser = {
+  name: string;
+  password: string;
+};
+
+type UserAdmin = BaseUser & {
+  type: "admin";
+  adminSince: number;
+};
+
+type UserModerator = BaseUser & {
+  type: "moderator";
+  moderatorSince: number;
+};
+
+type User = UserAdmin | UserModerator;
+```
+
+Then let's add some functions which generate every type of the users, like:
+```
+
+function getAdminUser(): UserAdmin {
+  return {
+    name: "valerii",
+    password: "very-secure-password",
+    type: "admin",
+    adminSince: 123,
+  };
+}
+
+function getModeratorUser(): UserModerator {
+  return {
+    name: "someone-but-valerii",
+    password: "very-secure-password+1",
+    type: "moderator",
+    moderatorSince: 123,
+  };
+}
+```
+
+Let's try to rename `adminSince` to `moderatorSince`. TypeScript will throw an error.
+Let's write type guard to check whether the user is admin.
+
+```
+const users = [getModeratorUser(), getAdminUser()];
+
+function isAdmin(user: User): user is UserAdmin {
+  return user.type === "admin";
+}
+```
+We may create a lot of general methods for every users like:
+```
+function showMeUserName(user: User) {
+  console.log(user.name);
+}
+```
+
+It's working cause every user  has a name.
+
+TypeScript disallow you to check the type if it is not in the list of available values,like:
+```
+//  This condition will always return 'false' since the types '"admin" | "moderator"' and '"admi"' have no overlap.
+if (user.type === 'super-user') {
+
+  
+}
+```
+
+But if you create a valid check, typescript cast a type User to specific type, 
+even without user-defined type guards, like:
+```
+
+if (user.type === "admin") {
+  console.log(user.adminSince); // User here is admin
+}
+```
+
+or you can even check the presence of the property:
+```
+if ('adminSince' in user) {
+  console.log(user.adminSince); // User here is admin
+}
+```
